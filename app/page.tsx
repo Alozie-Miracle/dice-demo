@@ -1,99 +1,54 @@
-'use client'
-
-import { useState } from 'react'
-
-import one from '@/assets/1.png'
-import two from '@/assets/2.png'
-import three from '@/assets/3.png'
-import four from '@/assets/4.png'
-import five from '@/assets/5.png'
-import six from '@/assets/6.png'
-import Image from 'next/image'
+"use client"
+import heroImg from '@/assets/background/hero-img.jpg';
+import logo from '@/assets/logo.svg'
+import Image from "next/image";
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Home() {
-  const [dice1, setDice1] = useState(1)
-  const [dice2, setDice2] = useState(1)
-  const [rolling, setRolling] = useState(false)
-  const [message, setMessage] = useState('')
+  const [Name, setName] = useState('')
+  const router = useRouter()
 
-  const images = [one, two, three, four, five, six]
+  const submit = () => {
+    if (!Name) return alert("please input your email");
 
-  const rollDice = () => {
-    setRolling(true)
-    setMessage('')
+    localStorage.setItem("name", Name )
 
-    const target1 = Math.floor(Math.random() * 6) + 1
-    const target2 = Math.floor(Math.random() * 6) + 1
-
-    let current1 = 1
-    let current2 = 1
-
-    // Track when both are done
-    let done1 = false
-    let done2 = false
-
-    const interval1 = setInterval(() => {
-      setDice1(current1)
-      if (current1 === target1) {
-        clearInterval(interval1)
-        setDice1(target1) // ensure final value is set
-        done1 = true
-        if (done1 && done2) checkWin(target1, target2)
-      } else {
-        current1 += 1
-      }
-    }, 300)
-
-    const interval2 = setInterval(() => {
-      setDice2(current2)
-      if (current2 === target2) {
-        clearInterval(interval2)
-        setDice2(target2) // ensure final value is set
-        done2 = true
-        if (done1 && done2) checkWin(target1, target2)
-      } else {
-        current2 += 1
-      }
-    }, 300)
-
-    
-  }
-
-  const checkWin = (d1: number, d2: number) => {
-    setRolling(false)
-    if (d1 === 6 && d2 === 6) {
-      setMessage('🎉 Double Six! You Win! 🎉')
-    }
+    router.push(`dashboard/${Name.trim()}/`)
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-200 to-purple-300 p-5">
-      <h1 className="text-4xl font-bold text-gray-800 mb-6">🎲 Roll the Dice</h1>
+    <div className='flex flex-col lg:flex-row h-screen bg-zinc-900'>
 
-      <div className="flex gap-5 my-10">
-        <div className="text-[8rem] bg-white p-2 rounded-md shadow-2xl font-bold drop-shadow w-full">
-          <Image src={images[dice1 -1 ]} alt='dice1' className='h-48 w-48' />
+      <div className='flex flex-col gap-5 justify-between px-3 py-8 lg:p-8 lg:w-1/2'>
+
+        <div className='flex flex-col gap-10'>
+          <Image src={logo} alt="logo" className='h-10 w-fit object-contain'  />
+          <div className="flex flex-row w-full">
+            <h1 className='font-bold text-white sm:text-5xl text-4xl'>Welcome to Avax Gods <br /> a Web Card Game</h1>
+          </div>
+
+          <p className='font-thin text-[24px] text-gray-300 t-5 lg:mt-10'>Connect your wallet to start playing <br /> the ultimate Web Battle Card Game</p>
+
         </div>
-        <div className="text-[8rem] bg-white p-2 rounded-md shadow-2xl font-bold drop-shadow w-full">
-          <Image src={images[dice2 -1 ]} alt='dice2' className='h-48 w-48' />
+
+        <div className='flex flex-col gap-3 lg:gap-5'>
+          <label htmlFor="name" className='font-semibold text-2xl text-white mb-3' >Name</label>
+          <input
+            type="text"
+            placeholder='Name'
+            value={Name}
+            onChange={(e) => setName(e.target.value)}
+            className='bg-zinc-800 text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full'
+          />
+
+          <button onClick={submit} className='px-4 cursor-pointer py-2 rounded-lg bg-purple-600 w-fit text-white font-bold'>Register</button>
         </div>
       </div>
 
-      <button
-        onClick={rollDice}
-        disabled={rolling}
-        className={`px-6 py-3 text-xl font-semibold rounded-2xl shadow-lg transition ${
-          rolling
-            ? 'bg-gray-400 text-white cursor-not-allowed'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
-        }`}
-      >
-        {rolling ? 'Rolling...' : 'Roll Dice'}
-      </button>
-
-      {message && (
-        <p className="mt-8 text-2xl font-semibold text-green-700 animate-pulse">{message}</p>
-      )}
+      <div className="flex flex-1">
+        <Image src={heroImg} alt="hero-img" className="flex-1 xl:h-full object-cover" />
+      </div>
     </div>
   )
 }
